@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>CS160 :: Cards :: Collin Mulhern :: Wesley Prager</title>
+	<link rel="stylesheet" href="styles.css" type="text/css" />
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+
+<body>
+	<h1>Pair Programming 1</h1>
+	<p id="test"><br /></p>
+	
+	<div style="position:relative;margin-top:1em;">
+	
+		<div class="card front" id="spot1" style="left:0em;top:0em;">
+		</div>
+		
+		<div class="card front" id="spot2" style="left:4em;top:0em;">
+		</div>
+		
+		<div class="card front" id="spot3" style="left:8em;top:0em;">
+		</div>
+		
+		<div class="card front" id="spot4" style="left:12em;top:0em;">
+		</div>
+		
+		<div class="card front" id="spot5" style="left:16em;top:0em;">
+		</div>
+		
+		<div class="card" id="deck" style="left:0em;top:8em;">
+			deck
+		</div>
+		
+		<div class="card" id="discard" style="left:4em;top:8em;">
+			discard
+		</div>
+		
+		<script>
+			var remaining = ["c2","c3","c4","c5","c6","d2","d3","d4","d5","d6","h2","h3","h4","h5","h6","s2","s3","s4","s5","s6"];
+			var dealt = [];
+			var spotsAvail = [1,2,3,4,5];
+			var spotsTaken = [];
+			var deal = function() {
+				if(jQuery.isEmptyObject(remaining)) {
+					remaining = dealt;
+					dealt = [];
+					alert("Out of cards! All cards will be returned to the deck.");
+					discard("#spot1");
+					discard("#spot2");
+					discard("#spot3");
+					discard("#spot4");
+					discard("#spot5");
+				}
+				var randCard = Math.floor(Math.random()*remaining.length);
+				var curCard = remaining[randCard];
+				// alert(curCard);
+				placeCard(curCard);
+				dealt.push(curCard);
+				remaining = jQuery.grep(remaining, function(value) {
+					return value != curCard;
+				});
+				// alert("card: " + curCard + "remaining length: " + remaining.length + "dealt: " + dealt);
+			}
+			var placeCard = function($card) {
+				// alert($card);
+				var randSpot = 0;
+				if(spotsAvail.length == 0) {
+					randSpot = spotsTaken[Math.floor(Math.random()*spotsTaken.length)];
+					discard("#spot" + randSpot);
+				} else {
+					randSpot = spotsAvail[Math.floor(Math.random()*spotsAvail.length)];
+					spotsTaken.push(randSpot);
+					spotsAvail = jQuery.grep(spotsAvail, function(value) {
+						return value != randSpot;
+					});
+				}
+				var suit = "";
+				var color = "";
+				switch($card[0]) {
+					case "c":
+						suit = "clubs";
+						color = "black";
+						break;
+					case "d":
+						suit = "diams";
+						color = "red";
+						break;
+					case "h":
+						suit = "hearts";
+						color = "red";
+						break;
+					case "s":
+						suit = "spades";
+						color = "black";
+						break;
+				}
+				switch($card[1]) {
+					case "2":
+						$("#spot"+randSpot).html("<div class=\"index "+color+"\">2<br />&"+suit+";</div><div class=\"spotB1 "+color+"\">&"+suit+";</div><div class=\"spotB3 "+color+"\">&"+suit+";</div>");
+						break;
+					case "3":
+						$("#spot"+randSpot).html("<div class=\"index "+color+"\">3<br />&"+suit+";</div><div class=\"spotB1 "+color+"\">&"+suit+";</div><div class=\"spotB2 "+color+"\">&"+suit+";</div><div class=\"spotB3 "+color+"\">&"+suit+";</div>");
+						break;
+					case "4":
+						$("#spot"+randSpot).html("<div class=\"index "+color+"\">4<br />&"+suit+";</div><div class=\"spotA1 "+color+"\">&"+suit+";</div><div class=\"spotA3 "+color+"\">&"+suit+";</div><div class=\"spotC1 "+color+"\">&"+suit+";</div><div class=\"spotC3 "+color+"\">&"+suit+";</div>");
+						break;
+					case "5":
+						$("#spot"+randSpot).html("<div class=\"index "+color+"\">5<br />&"+suit+";</div><div class=\"spotA1 "+color+"\">&"+suit+";</div><div class=\"spotA3 "+color+"\">&"+suit+";</div><div class=\"spotB2 "+color+"\">&"+suit+";</div><div class=\"spotC1 "+color+"\">&"+suit+";</div><div class=\"spotC3 "+color+"\">&"+suit+";</div>");
+						break;
+					case "6":
+						$("#spot"+randSpot).html("<div class=\"index "+color+"\">6<br />&"+suit+";</div><div class=\"spotA1 "+color+"\">&"+suit+";</div><div class=\"spotA2 "+color+"\">&"+suit+";</div><div class=\"spotA3 "+color+"\">&"+suit+";</div><div class=\"spotC1 "+color+"\">&"+suit+";</div><div class=\"spotC2 "+color+"\">&"+suit+";</div><div class=\"spotC3 "+color+"\">&"+suit+";</div>");
+						break;
+				}
+			}
+			var discard = function($spot) {
+				// alert("discarding: " + $spot);
+				$($spot).html("");
+			}
+			$("#deck").click(function() {
+				deal();
+			});
+			$("#spot1").click(function() {
+				discard("#spot1");
+				spotsAvail.push(1);
+				spotsTaken = jQuery.grep(spotsTaken, function(value) {
+					return value != 1;
+				});
+			});
+			$("#spot2").click(function() {
+				discard("#spot2");
+				spotsAvail.push(2);
+				spotsTaken = jQuery.grep(spotsTaken, function(value) {
+					return value != 2;
+				});
+			});
+			$("#spot3").click(function() {
+				discard("#spot3");
+				spotsAvail.push(3);
+				spotsTaken = jQuery.grep(spotsTaken, function(value) {
+					return value != 3;
+				});
+			});
+			$("#spot4").click(function() {
+				discard("#spot4");
+				spotsAvail.push(4);
+				spotsTaken = jQuery.grep(spotsTaken, function(value) {
+					return value != 4;
+				});
+			});
+			$("#spot5").click(function() {
+				discard("#spot5");
+				spotsAvail.push(5);
+				spotsTaken = jQuery.grep(spotsTaken, function(value) {
+					return value != 5;
+				});
+			});
+		</script>
+	
+	</div>
+	
+</body>
+
+
+</html>
